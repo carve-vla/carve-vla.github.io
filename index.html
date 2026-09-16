@@ -170,77 +170,72 @@ for Robust Vision-Language-Action Models</title>
 
 <section class="hero teaser">
   <div class="container is-max-desktop">
-    <div class="hero-body">
-      <video id="teaser" autoplay muted loop playsinline height="100%">
-        <source src="./static/videos/teaser.mp4"
-                type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered">
-        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
-        free-viewpoint
-        portraits.
-      </h2>
+    <div class="hero-body has-text-centered">
+      <img
+        src="./static/images/Figure0.png"
+        alt="CARVE overview"
+        style="width: 100%; max-width: 1000px; height: auto;"
+      >
     </div>
   </div>
 </section>
 
 
-<section class="hero is-light is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-steve">
-          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/steve.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-chair-tp">
-          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/chair-tp.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-shiba">
-          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/shiba.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-fullbody">
-          <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/fullbody.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-blueshirt">
-          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/blueshirt.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-mask">
-          <video poster="" id="mask" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/mask.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-coffee">
-          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/coffee.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-toby">
-          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/toby2.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-      </div>
+<!-- Method. -->
+<div class="columns is-centered">
+  <div class="column is-four-fifths">
+
+    <h2 class="title is-3 has-text-centered">Method</h2>
+
+    <div class="content has-text-centered">
+      <img
+        src="./static/images/Figure2.jpg"
+        alt="Overview of the CARVE method"
+        style="width: 100%; max-width: 1000px; height: auto;"
+      >
+
+      <p class="is-size-7">
+        <strong>Figure 2. Overview of CARVE.</strong>
+        CARVE identifies task-relevant source/goal and gripper-centered regions,
+        softly reweights visual attention toward these regions, and suppresses
+        persistent attention sinks in task-irrelevant regions while preserving
+        the complete visual context.
+      </p>
     </div>
+
+    <div class="content has-text-justified">
+
+      <p>
+        <strong>1) Task-Relevant Region Estimation.</strong>
+        CARVE uses the language instruction to ground the source and goal objects,
+        while temporal execution cues identify the gripper-centered region.
+        These object, goal, and gripper regions jointly define the task-relevant
+        visual evidence required for manipulation.
+      </p>
+
+      <p>
+        <strong>2) Context-Preserving Soft Attention Reweighting.</strong>
+        CARVE assigns higher relative attention weights to task-relevant visual
+        tokens so that the action decoder focuses more strongly on regions directly
+        related to task execution. Background and contextual tokens remain active
+        rather than being removed, preserving useful global information such as
+        workspace geometry and object-environment relationships.
+      </p>
+
+      <p>
+        <strong>3) Task-Irrelevant Attention Sink Suppression.</strong>
+        CARVE detects persistent attention peaks in task-irrelevant regions when
+        a patch receives abnormally high attention relative to its local neighbors.
+        The detected sink is selectively reduced toward the level of neighboring
+        non-sink patches, while high attention within task-relevant object, goal,
+        and gripper regions is preserved.
+      </p>
+
+    </div>
+
   </div>
-</section>
+</div>
+<!--/ Method. -->
 
 
 <section class="section">
@@ -249,33 +244,32 @@ for Robust Vision-Language-Action Models</title>
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
+
         <div class="content has-text-justified">
           <p>
-            We present the first method capable of photorealistically reconstructing a non-rigidly
-            deforming scene using photos/videos captured casually from mobile phones.
+            Vision-Language-Action (VLA) models directly generate robot actions from visual
+            observations and language instructions. However, their performance may degrade
+            under Out-of-Distribution (OOD) conditions where task-irrelevant visual contexts
+            change. In this paper, we formulate visual distribution shift as an attention
+            allocation problem between task-relevant visual evidence and task-irrelevant
+            contextual cues, and propose <strong>CARVE</strong>, a training-free inference-time
+            attention adaptation method.
           </p>
+
           <p>
-            Our approach augments neural radiance fields
-            (NeRF) by optimizing an
-            additional continuous volumetric deformation field that warps each observed point into a
-            canonical 5D NeRF.
-            We observe that these NeRF-like deformation fields are prone to local minima, and
-            propose a coarse-to-fine optimization method for coordinate-based models that allows for
-            more robust optimization.
-            By adapting principles from geometry processing and physical simulation to NeRF-like
-            models, we propose an elastic regularization of the deformation field that further
-            improves robustness.
+            CARVE estimates task-relevant regions using language-conditioned object/goal
+            grounding and temporal gripper-centered execution cues. During action decoding,
+            CARVE reweights image-token attention toward task-relevant regions while reducing
+            the relative influence of task-irrelevant regions and suppressing persistent
+            attention sinks.
           </p>
+
           <p>
-            We show that <span class="dnerf">Nerfies</span> can turn casually captured selfie
-            photos/videos into deformable NeRF
-            models that allow for photorealistic renderings of the subject from arbitrary
-            viewpoints, which we dub <i>"nerfies"</i>. We evaluate our method by collecting data
-            using a
-            rig with two mobile phones that take time-synchronized photos, yielding train/validation
-            images of the same pose at different viewpoints. We show that our method faithfully
-            reconstructs non-rigidly deforming scenes and reproduces unseen views with high
-            fidelity.
+            Simulation results show that CARVE consistently improves OOD performance across
+            all three VLA backbones: SpatialVLA, UniVLA, and &pi;<sub>0</sub>. Real-world
+            experimental results show consistent performance improvements under diverse
+            task-irrelevant visual shifts, demonstrating that CARVE is effective for performing
+            robust inference across different VLA architectures.
           </p>
         </div>
       </div>

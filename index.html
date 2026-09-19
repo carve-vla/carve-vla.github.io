@@ -1,1163 +1,1149 @@
 <!DOCTYPE html>
+
 <html>
+
 <head>
+
   <meta charset="utf-8">
+
   <meta name="description"
-        content="Deformable Neural Radiance Fields creates free-viewpoint portraits (nerfies) from casually captured videos.">
-  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+
+        content="CARVE: training-free attention adaptation for robust vision-language-action models under visual distribution shifts.">
+
+  <meta name="keywords" content="CARVE, Vision-Language-Action, VLA, robot manipulation, robustness">
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>CARVE: Context-Preserving Attention Reweighting of Visual Evidence
+
 for Robust Vision-Language-Action Models</title>
+<link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-
-    gtag('config', 'G-PYVRSFMDRL');
-  </script>
-
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
         rel="stylesheet">
 
+
   <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+
   <link rel="stylesheet"
+
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
   <link rel="stylesheet" href="./static/css/index.css">
 
+
+<style>
+/* CARVE experiment presentation: compact, responsive, full-resolution links */
+.carve-experiments { padding-top: 1.8rem; }
+.carve-experiments .carve-section-title { margin-bottom: 0.85rem; }
+.carve-experiments .carve-subtitle { margin: 1.75rem 0 1.05rem; }
+.carve-experiments .carve-figure { display: block; max-width: 100%; width: 100%; height: auto; margin: 0 auto; }
+.carve-experiments .carve-image-link { display: block; }
+.carve-experiments .carve-image-link:focus-visible { outline: 2px solid #3273dc; outline-offset: 3px; }
+.carve-experiments .carve-caption { margin: .4rem auto 0; font-size: .84rem; line-height: 1.4; color: #4a5568; text-align: center; }
+.carve-experiments .carve-media-block { min-width: 0; margin: 0; text-align: center; }
+.carve-experiments .carve-table-first { max-width: 820px; margin: 0 auto 1.35rem; }
+.carve-experiments .carve-table-first .carve-figure { max-height: 570px; width: auto; }
+.carve-experiments .carve-overview-grid { display: grid; grid-template-columns: minmax(0, .96fr) minmax(0, 1.04fr); gap: 22px; align-items: start; margin: 0 auto 1.45rem; }
+.carve-experiments .carve-overview-copy { font-size: .98rem; line-height: 1.59; text-align: justify; }
+.carve-experiments .carve-overview-copy p { margin: 0 0 .75rem; }
+.carve-experiments .carve-overview-side { display: grid; gap: 13px; }
+.carve-experiments .carve-overview-side .carve-figure { max-height: 240px; object-fit: contain; width: auto; }
+.carve-experiments .carve-fractal-table .carve-figure { max-height: 155px; }
+.carve-experiments .carve-attention-intro { max-width: 900px; margin: .65rem auto .6rem; }
+.carve-experiments .carve-attention-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; margin: 0 auto 1.4rem; }
+.carve-experiments .carve-attention-grid .carve-figure { max-height: 305px; width: auto; object-fit: contain; }
+.carve-experiments .carve-real-overview::after { content: ''; display: block; clear: both; }
+.carve-experiments .carve-real-figure { float: right; width: 51%; margin: .2rem 0 .7rem 22px; }
+.carve-experiments .carve-real-figure .carve-figure { width: 100%; }
+.carve-experiments .carve-real-copy { text-align: justify; }
+.carve-experiments .carve-real-copy p { margin-bottom: .75rem; }
+.carve-experiments .carve-results-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 20px; align-items: start; margin: .85rem 0 1.3rem; }
+.carve-experiments .carve-results-grid .carve-figure { max-height: 360px; width: auto; object-fit: contain; }
+.carve-experiments .carve-divider { height: 1px; background: #e7eaf0; margin: 2rem 0; }
+.carve-experiments .carve-demo-heading { margin: 1.6rem 0 .85rem; }
+.carve-experiments .carve-sim-carousel { margin-top: .75rem; }
+.carve-experiments .carve-bibtex { margin-top: 2rem; }
+.carve-experiments .carve-bibtex pre { white-space: pre-wrap; overflow-wrap: anywhere; text-align: left; font-size: .87rem; }
+.carve-experiments .carve-bibtex .carve-bibtex-actions { text-align: right; margin-bottom: .5rem; }
+@media (max-width: 800px) {
+  .carve-experiments .carve-overview-grid { grid-template-columns: 1fr; gap: 14px; }
+  .carve-experiments .carve-attention-grid { gap: 10px; }
+  .carve-experiments .carve-attention-grid .carve-figure { max-height: 240px; }
+  .carve-experiments .carve-results-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .carve-experiments .carve-caption { font-size: .76rem; }
+}
+@media (max-width: 600px) {
+  .carve-experiments .carve-attention-grid, .carve-experiments .carve-results-grid { grid-template-columns: 1fr; }
+  .carve-experiments .carve-real-figure { float: none; width: 100%; margin: 0 auto 1rem; }
+  .carve-experiments .carve-table-first .carve-figure { width: 100%; }
+}
+</style>
+
 <!-- CARVE Simulation Carousel Style -->
+
 <style>
 
+
 .carve-sim-carousel {
+
   width: 100%;
+
   margin-top: 25px;
+
   padding: 25px 44px 30px;
+
   background: #f8faff;
+
   border: 1px solid #dce4f5;
+
   border-radius: 16px;
+
 }
+
 
 /* Independent carousel rows */
+
 .carve-sim-row {
+
   position: relative;
+
   width: 100%;
+
   min-width: 0;
+
   margin-bottom: 30px;
+
 }
+
 
 .carve-sim-row:last-child {
+
   margin-bottom: 0;
+
 }
+
 
 /* Visible video area */
+
 .carve-sim-viewport {
+
   width: 100%;
+
   overflow: hidden;
+
 }
+
 
 /* Horizontal sliding track */
+
 .carve-sim-track {
+
   display: flex;
+
   gap: 18px;
+
   width: 100%;
+
   align-items: stretch;
+
   transition: transform 0.42s ease;
+
 }
+
 
 /* One experiment pair */
+
 .carve-sim-pair {
+
   flex: 0 0 calc((100% - 18px) / 2);
+
   min-width: 0;
+
   text-align: center;
+
 }
+
 
 /* Background Shift / Table Shift */
+
 .carve-sim-condition {
+
   font-size: 0.9rem;
+
   font-weight: 600;
+
   color: #364152;
+
   margin-bottom: 10px;
+
   text-align: center;
+
 }
+
 
 /* Baseline and +Ours side by side */
+
 .carve-sim-video-pair {
+
   display: grid;
+
   grid-template-columns: repeat(2, minmax(0, 1fr));
+
   gap: 10px;
+
 }
+
 
 .carve-sim-video-item {
+
   min-width: 0;
+
   text-align: center;
+
 }
+
 
 /* Baseline / +Ours labels */
+
 .carve-sim-label {
+
   font-size: 0.9rem;
+
   font-weight: 600;
+
   color: #364152;
+
   margin-bottom: 8px;
+
 }
+
 
 /* Video */
+
 .carve-sim-video {
+
   display: block;
+
   width: 100%;
+
   aspect-ratio: 4 / 3;
+
   object-fit: contain;
+
   background: #111;
+
   border-radius: 10px;
+
 }
+
 
 /* Task name below each video pair */
+
 .carve-sim-task {
+
   font-size: 0.9rem;
+
   font-weight: 600;
+
   color: #364152;
+
   margin-top: 10px;
+
   text-align: center;
+
 }
+
 
 /* Navigation arrows */
+
 .carve-sim-arrow {
+
   position: absolute;
+
   top: 50%;
+
   transform: translateY(-50%);
+
   width: 34px;
+
   height: 44px;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   border: none;
+
   background: transparent;
+
   color: #3273dc;
+
   font-size: 30px;
+
   cursor: pointer;
+
   z-index: 2;
+
   padding: 0;
+
 }
+
 
 .carve-sim-prev {
+
   left: -38px;
+
 }
+
 
 .carve-sim-next {
+
   right: -38px;
+
 }
+
 
 .carve-sim-arrow:hover {
+
   color: #174ea6;
+
 }
+
 
 /* Navigation dots */
+
 .carve-sim-dots {
+
   display: flex;
+
   justify-content: center;
+
   gap: 9px;
+
   margin-top: 18px;
+
 }
+
 
 .carve-sim-dot {
+
   width: 9px;
+
   height: 9px;
+
   padding: 0;
+
   border: none;
+
   border-radius: 50%;
+
   background: #c2cad8;
+
   cursor: pointer;
+
 }
+
 
 .carve-sim-dot.active {
+
   background: #3273dc;
+
 }
+
 
 /* Mobile */
+
 @media (max-width: 650px) {
 
+
   .carve-sim-carousel {
+
     padding: 20px 28px;
+
   }
+
 
   .carve-sim-pair {
+
     flex-basis: 100%;
+
   }
+
 
   .carve-sim-track {
+
     gap: 12px;
+
   }
+
 
   .carve-sim-prev {
+
     left: -27px;
+
   }
+
 
   .carve-sim-next {
+
     right: -27px;
+
   }
+
 
   .carve-sim-arrow {
+
     width: 25px;
+
     font-size: 22px;
+
   }
+
 
   .carve-sim-condition,
+
   .carve-sim-label,
+
   .carve-sim-task {
+
     font-size: 0.8rem;
+
   }
 
+
 }
+
 
 </style>
 
 
   <link rel="icon" href="./static/images/favicon.svg">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
+
 </head>
+
 <body>
 
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="https://keunhong.com">
-      <span class="icon">
-          <i class="fas fa-home"></i>
-      </span>
-      </a>
-
-      <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link">
-          More Research
-        </a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="https://hypernerf.github.io">
-            HyperNeRF
-          </a>
-          <a class="navbar-item" href="https://nerfies.github.io">
-            Nerfies
-          </a>
-          <a class="navbar-item" href="https://latentfusion.github.io">
-            LatentFusion
-          </a>
-          <a class="navbar-item" href="https://photoshape.github.io">
-            PhotoShape
-          </a>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</nav>
-
-
 <section class="hero">
+
   <div class="hero-body">
+
     <div class="container is-max-desktop">
+
       <div class="columns is-centered">
+
         <div class="column has-text-centered">
+
           <h1 class="title is-1 publication-title">
+
             CARVE: Context-Preserving Attention Reweighting of Visual Evidence<br>
+
             for Robust Vision-Language-Action Models
+
           </h1>
 
-          <div class="is-size-5 publication-authors">
-            <span class="author-block">
-              Seo-Hyun Kim<sup>1</sup>,
-            </span>
-            <span class="author-block">
-              Kwang-Hyun Park<sup>1,*</sup>
-            </span>
-          </div>
 
           <div class="is-size-5 publication-authors">
+
             <span class="author-block">
-              <sup>1</sup>Kwangwoon University
+
+              Seo-Hyun Kim<sup>1</sup>,
+
             </span>
+
+            <span class="author-block">
+
+              Kwang-Hyun Park<sup>1,*</sup>
+
+            </span>
+
           </div>
+
+
+          <div class="is-size-5 publication-authors">
+
+            <span class="author-block">
+
+              <sup>1</sup>Kwangwoon University
+
+            </span>
+
+          </div>
+
 
           <div class="column has-text-centered">
+
             <div class="publication-links">
 
+
               <!-- Paper. -->
+
               <span class="link-block">
+
                 <span class="button is-normal is-rounded is-dark">
+
                   <span class="icon">
+
                     <i class="fas fa-file-pdf"></i>
+
                   </span>
+
                   <span>Paper (coming soon)</span>
+
                 </span>
+
               </span>
+
 
               <!-- arXiv. -->
+
               <span class="link-block">
+
                 <span class="button is-normal is-rounded is-dark">
+
                   <span class="icon">
+
                     <i class="ai ai-arxiv"></i>
+
                   </span>
+
                   <span>arXiv (coming soon)</span>
+
                 </span>
+
               </span>
 
+
               <!-- Code. -->
+
               <span class="link-block">
+
                 <span class="button is-normal is-rounded is-dark">
+
                   <span class="icon">
+
                     <i class="fab fa-github"></i>
+
                   </span>
+
                   <span>Code (coming soon)</span>
+
                 </span>
+
               </span>
+
 
             </div>
 
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 </section>
+
 
 <section class="hero teaser">
+
   <div class="container is-max-desktop">
+
     <div class="hero-body has-text-centered">
+
       <img
+
         src="./static/images/Figure0.png"
+
         alt="CARVE overview"
+
         style="width: 100%; max-width: 1000px; height: auto;"
+
       >
+
     </div>
+
   </div>
+
 </section>
 
+
 <section class="section">
+
   <div class="container is-max-desktop">
+
     <!-- Abstract. -->
+
     <div class="columns is-centered has-text-centered">
+
       <div class="column is-four-fifths">
+
         <h2 class="title is-3">Abstract</h2>
 
+
         <div class="content has-text-justified">
+
           <p>
+
             Vision-Language-Action (VLA) models directly generate robot actions from visual
+
             observations and language instructions. However, their performance may degrade
+
             under Out-of-Distribution (OOD) conditions where task-irrelevant visual contexts
+
             change. In this paper, we formulate visual distribution shift as an attention
+
             allocation problem between task-relevant visual evidence and task-irrelevant
+
             contextual cues, and propose <strong>CARVE</strong>, a training-free inference-time
+
             attention adaptation method.
+
           </p>
 
+
           <p>
+
             CARVE estimates task-relevant regions using language-conditioned object/goal
+
             grounding and temporal gripper-centered execution cues. During action decoding,
+
             CARVE reweights image-token attention toward task-relevant regions while reducing
+
             the relative influence of task-irrelevant regions and suppressing persistent
+
             attention sinks.
+
           </p>
 
+
           <p>
+
             Simulation results show that CARVE consistently improves OOD performance across
+
             all three VLA backbones: SpatialVLA, UniVLA, and &pi;<sub>0</sub>. Real-world
+
             experimental results show consistent performance improvements under diverse
+
             task-irrelevant visual shifts, demonstrating that CARVE is effective for performing
+
             robust inference across different VLA architectures.
+
           </p>
+
         </div>
+
       </div>
+
     </div>
+
     <!--/ Abstract. -->
 
 
 <!-- Method. -->
+
 <div class="columns is-centered">
+
   <div class="column is-four-fifths">
+
 
     <h2 class="title is-3 has-text-centered">Method</h2>
 
+
     <div class="content has-text-centered">
+
       <img
+
         src="./static/images/Figure2.jpg"
+
         alt="Overview of the CARVE method"
+
         style="width: 100%; max-width: 1000px; height: auto;"
+
       >
 
+
       <p class="is-size-7">
+
         <strong>Figure 2. Overview of CARVE.</strong>
+
         CARVE identifies task-relevant source/goal and gripper-centered regions,
+
         softly reweights visual attention toward these regions, and suppresses
+
         persistent attention sinks in task-irrelevant regions while preserving
+
         the complete visual context.
+
       </p>
+
     </div>
+
 
     <div class="content has-text-justified">
 
+
       <p>
+
         <strong>1) Task-Relevant Region Estimation.</strong>
+
         CARVE uses the language instruction to ground the source and goal objects,
+
         while temporal execution cues identify the gripper-centered region.
+
         These object, goal, and gripper regions jointly define the task-relevant
+
         visual evidence required for manipulation.
+
       </p>
 
+
       <p>
+
         <strong>2) Context-Preserving Soft Attention Reweighting.</strong>
+
         CARVE assigns higher relative attention weights to task-relevant visual
+
         tokens so that the action decoder focuses more strongly on regions directly
+
         related to task execution. Background and contextual tokens remain active
+
         rather than being removed, preserving useful global information such as
+
         workspace geometry and object-environment relationships.
+
       </p>
+
 
       <p>
+
         <strong>3) Task-Irrelevant Attention Sink Suppression.</strong>
+
         CARVE detects persistent attention peaks in task-irrelevant regions when
+
         a patch receives abnormally high attention relative to its local neighbors.
+
         The detected sink is selectively reduced toward the level of neighboring
+
         non-sink patches, while high attention within task-relevant object, goal,
+
         and gripper regions is preserved.
+
       </p>
 
+
     </div>
 
+
   </div>
+
 </div>
+
 <!--/ Method. -->
-
-
-
-
-    
-    
-    <!-- Simulation Demonstrations. -->
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-
-        <h2 class="title is-3 has-text-centered">
-          Simulation Demonstrations
-        </h2>
-
-        <h3 class="title is-4 has-text-centered">
-          SimplerEnv
-        </h3>
-
-        <div class="carve-sim-carousel">
-
-          <!-- Top Row -->
-          <div class="carve-sim-row" id="sim-top">
-
-            <button
-              class="carve-sim-arrow carve-sim-prev"
-              type="button"
-              aria-label="Previous top-row experiment">
-              &#10094;
-            </button>
-
-            <div class="carve-sim-viewport">
-              <div class="carve-sim-track"></div>
-            </div>
-
-            <button
-              class="carve-sim-arrow carve-sim-next"
-              type="button"
-              aria-label="Next top-row experiment">
-              &#10095;
-            </button>
-
-            <div class="carve-sim-dots"></div>
-
-          </div>
-
-          <!-- Bottom Row -->
-          <div class="carve-sim-row" id="sim-bottom">
-
-            <button
-              class="carve-sim-arrow carve-sim-prev"
-              type="button"
-              aria-label="Previous bottom-row experiment">
-              &#10094;
-            </button>
-
-            <div class="carve-sim-viewport">
-              <div class="carve-sim-track"></div>
-            </div>
-
-            <button
-              class="carve-sim-arrow carve-sim-next"
-              type="button"
-              aria-label="Next bottom-row experiment">
-              &#10095;
-            </button>
-
-            <div class="carve-sim-dots"></div>
-
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-    <!--/ Simulation Demonstrations. -->
-
-
   </div>
 </section>
 
-
-<section class="section">
+<!-- Experiments: Simulation and Real World -->
+<section class="section carve-experiments" id="experiments">
   <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered carve-section-title">Experiments</h2>
 
-    <div class="columns is-centered">
+    <!-- Table 1 appears immediately below the Experiments heading. -->
+    <figure class="carve-media-block carve-table-first">
+      <a class="carve-image-link" href="./static/Table/Table1_Simulation_result.png" target="_blank" rel="noopener noreferrer" aria-label="Open Table 1 at full resolution">
+        <img class="carve-figure" src="./static/Table/Table1_Simulation_result.png" alt="Bridge task and grasp success under in-domain and OOD conditions for SpatialVLA, UniVLA, and pi-zero" loading="lazy">
+      </a>
+      <figcaption class="carve-caption"><strong>Table 1.</strong> Bridge task and grasp success rates across three VLA backbones.</figcaption>
+    </figure>
 
-      <!-- Visual Effects. -->
-      <div class="column">
-        <div class="content">
-          <h2 class="title is-3">Visual Effects</h2>
-          <p>
-            Using <i>nerfies</i> you can create fun visual effects. This Dolly zoom effect
-            would be impossible without nerfies since it would require going through a wall.
-          </p>
-          <video id="dollyzoom" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/dollyzoom-stacked.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
+    <!-- SIMULATION: compact text alongside Figure 3 and Table 2. -->
+    <h3 class="title is-4 has-text-centered carve-subtitle" id="simulation-results">Simulation</h3>
+    <div class="carve-overview-grid">
+      <div class="carve-overview-copy">
+        <p>
+          We evaluate CARVE in the visual-matching settings of <strong>SimplerEnv</strong>.
+          Tasks and evaluation configurations are held fixed while task-irrelevant backgrounds
+          and workspace surfaces are varied. Representative in-domain and OOD observations
+          are shown in Figure 3.
+        </p>
+        <p>
+          Four Bridge manipulation tasks are evaluated with frozen
+          <strong>SpatialVLA, UniVLA, and &pi;<sub>0</sub></strong> backbones. We compare
+          the OOD baseline and CARVE under matched trials, reporting task and grasp success
+          in Table 1.
+        </p>
+        <p>
+          For <strong>Pick Coke Can</strong>, SpatialVLA task success under background
+          shift increases from <strong>80.3%</strong> to <strong>91.7%</strong> with CARVE;
+          under table shift, it increases from <strong>71.7%</strong> to
+          <strong>87.7%</strong>. Results for SpatialVLA and &pi;<sub>0</sub> are
+          summarized in Table 2.
+        </p>
       </div>
-      <!--/ Visual Effects. -->
-
-      <!-- Matting. -->
-      <div class="column">
-        <h2 class="title is-3">Matting</h2>
-        <div class="columns is-centered">
-          <div class="column content">
-            <p>
-              As a byproduct of our method, we can also solve the matting problem by ignoring
-              samples that fall outside of a bounding box during rendering.
-            </p>
-            <video id="matting-video" controls playsinline height="100%">
-              <source src="./static/videos/matting.mp4"
-                      type="video/mp4">
-            </video>
-          </div>
-
-        </div>
-      </div>
-    </div>
-    <!--/ Matting. -->
-
-    <!-- Animation. -->
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Animation</h2>
-
-        <!-- Interpolating. -->
-        <h3 class="title is-4">Interpolating states</h3>
-        <div class="content has-text-justified">
-          <p>
-            We can also animate the scene by interpolating the deformation latent codes of two input
-            frames. Use the slider here to linearly interpolate between the left frame and the right
-            frame.
-          </p>
-        </div>
-        <div class="columns is-vcentered interpolation-panel">
-          <div class="column is-3 has-text-centered">
-            <img src="./static/images/interpolate_start.jpg"
-                 class="interpolation-image"
-                 alt="Interpolate start reference image."/>
-            <p>Start Frame</p>
-          </div>
-          <div class="column interpolation-video-column">
-            <div id="interpolation-image-wrapper">
-              Loading...
-            </div>
-            <input class="slider is-fullwidth is-large is-info"
-                   id="interpolation-slider"
-                   step="1" min="0" max="100" value="0" type="range">
-          </div>
-          <div class="column is-3 has-text-centered">
-            <img src="./static/images/interpolate_end.jpg"
-                 class="interpolation-image"
-                 alt="Interpolation end reference image."/>
-            <p class="is-bold">End Frame</p>
-          </div>
-        </div>
-        <br/>
-        <!--/ Interpolating. -->
-
-        <!-- Re-rendering. -->
-        <h3 class="title is-4">Re-rendering the input video</h3>
-        <div class="content has-text-justified">
-          <p>
-            Using <span class="dnerf">Nerfies</span>, you can re-render a video from a novel
-            viewpoint such as a stabilized camera by playing back the training deformations.
-          </p>
-        </div>
-        <div class="content has-text-centered">
-          <video id="replay-video"
-                 controls
-                 muted
-                 preload
-                 playsinline
-                 width="75%">
-            <source src="./static/videos/replay.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <!--/ Re-rendering. -->
-
+      <div class="carve-overview-side">
+        <figure class="carve-media-block">
+          <a class="carve-image-link" href="./static/images/Figure3.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 3 at full resolution">
+            <img class="carve-figure" src="./static/images/Figure3.jpg" alt="SimplerEnv in-domain and OOD background and table appearances" loading="lazy">
+          </a>
+          <figcaption class="carve-caption"><strong>Figure 3.</strong> In-domain and OOD visual conditions in SimplerEnv.</figcaption>
+        </figure>
+        <figure class="carve-media-block carve-fractal-table">
+          <a class="carve-image-link" href="./static/Table/Table2_fractal_result.png" target="_blank" rel="noopener noreferrer" aria-label="Open Table 2 at full resolution">
+            <img class="carve-figure" src="./static/Table/Table2_fractal_result.png" alt="Fractal Pick Coke Can success rates under background and table shifts" loading="lazy">
+          </a>
+          <figcaption class="carve-caption"><strong>Table 2.</strong> Fractal background- and table-shift results.</figcaption>
+        </figure>
       </div>
     </div>
-    <!--/ Animation. -->
 
+    <!-- Figures 4 and 5: one compact horizontal row, no Qualitative Results heading. -->
+    <p class="carve-overview-copy carve-attention-intro">
+      Figures 4 and 5 compare OOD observations and attention maps for the frozen policy
+      and CARVE. Attention on task-irrelevant contextual regions is reduced while
+      attention to relevant objects, goals, and gripper-centered regions is emphasized.
+    </p>
+    <div class="carve-attention-grid">
+      <figure class="carve-media-block">
+        <a class="carve-image-link" href="./static/images/Figure4.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 4 at full resolution">
+          <img class="carve-figure" src="./static/images/Figure4.jpg" alt="Pick Coke Can baseline and CARVE attention maps under background and table shifts" loading="lazy">
+        </a>
+        <figcaption class="carve-caption"><strong>Figure 4.</strong> Pick Coke Can attention under visual shifts.</figcaption>
+      </figure>
+      <figure class="carve-media-block">
+        <a class="carve-image-link" href="./static/images/Figure5.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 5 at full resolution">
+          <img class="carve-figure" src="./static/images/Figure5.jpg" alt="Bridge-task observations and attention maps for SpatialVLA and CARVE" loading="lazy">
+        </a>
+        <figcaption class="carve-caption"><strong>Figure 5.</strong> Bridge-task attention under visual shifts.</figcaption>
+      </figure>
+    </div>
 
-    <!-- Concurrent Work. -->
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Related Links</h2>
-
-        <div class="content has-text-justified">
-          <p>
-            There's a lot of excellent work that was introduced around the same time as ours.
-          </p>
-          <p>
-            <a href="https://arxiv.org/abs/2104.09125">Progressive Encoding for Neural Optimization</a> introduces an idea similar to our windowed position encoding for coarse-to-fine optimization.
-          </p>
-          <p>
-            <a href="https://www.albertpumarola.com/research/D-NeRF/index.html">D-NeRF</a> and <a href="https://gvv.mpi-inf.mpg.de/projects/nonrigid_nerf/">NR-NeRF</a>
-            both use deformation fields to model non-rigid scenes.
-          </p>
-          <p>
-            Some works model videos with a NeRF by directly modulating the density, such as <a href="https://video-nerf.github.io/">Video-NeRF</a>, <a href="https://www.cs.cornell.edu/~zl548/NSFF/">NSFF</a>, and <a href="https://neural-3d-video.github.io/">DyNeRF</a>
-          </p>
-          <p>
-            There are probably many more by the time you are reading this. Check out <a href="https://dellaert.github.io/NeRF/">Frank Dellart's survey on recent NeRF papers</a>, and <a href="https://github.com/yenchenlin/awesome-NeRF">Yen-Chen Lin's curated list of NeRF papers</a>.
-          </p>
-        </div>
+    <h4 class="title is-5 has-text-centered carve-demo-heading">Simulation Demonstrations</h4>
+    <h5 class="title is-6 has-text-centered">SimplerEnv</h5>
+    <div class="carve-sim-carousel" aria-label="SimplerEnv simulation demonstrations">
+      <div class="carve-sim-row" id="sim-top">
+        <button class="carve-sim-arrow carve-sim-prev" type="button" aria-label="Previous upper simulation comparison">&#10094;</button>
+        <div class="carve-sim-viewport"><div class="carve-sim-track"></div></div>
+        <button class="carve-sim-arrow carve-sim-next" type="button" aria-label="Next upper simulation comparison">&#10095;</button>
+        <div class="carve-sim-dots"></div>
+      </div>
+      <div class="carve-sim-row" id="sim-bottom">
+        <button class="carve-sim-arrow carve-sim-prev" type="button" aria-label="Previous lower simulation comparison">&#10094;</button>
+        <div class="carve-sim-viewport"><div class="carve-sim-track"></div></div>
+        <button class="carve-sim-arrow carve-sim-next" type="button" aria-label="Next lower simulation comparison">&#10095;</button>
+        <div class="carve-sim-dots"></div>
       </div>
     </div>
-    <!--/ Concurrent Work. -->
 
-  </div>
-</section>
+    <div class="carve-divider" role="separator"></div>
 
+    <!-- REAL WORLD: float Figure 7, allowing text to flow into the space below it. -->
+    <h3 class="title is-4 has-text-centered carve-subtitle" id="real-world-results">Real-World Experiments</h3>
+    <div class="carve-real-overview carve-overview-copy">
+      <figure class="carve-media-block carve-real-figure">
+        <a class="carve-image-link" href="./static/images/Figure7.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 7 at full resolution">
+          <img class="carve-figure" src="./static/images/Figure7.jpg" alt="Real-world in-domain, table-shift, distractor, and lighting-shift scenes" loading="lazy">
+        </a>
+        <figcaption class="carve-caption"><strong>Figure 7.</strong> Real-world in-domain and OOD visual conditions.</figcaption>
+      </figure>
+      <div class="carve-real-copy">
+        <p>
+          We evaluate four tabletop manipulation tasks with a <strong>6-DoF xArm</strong>
+          and an <strong>Intel RealSense D435i</strong> RGB camera: placing a tomato
+          or mandarin orange on a plate or in a white box. The SpatialVLA-based
+          policy is LoRA-fine-tuned on task demonstrations and then frozen;
+          CARVE is applied only at inference time.
+        </p>
+        <p>
+          Figure 7 shows the in-domain scene and the table, distractor-object,
+          and lighting shifts. Under table shift, overall task success increases
+          from <strong>31/80</strong> to <strong>57/80</strong> with CARVE, and grasp
+          success increases from <strong>44/80</strong> to <strong>64/80</strong>
+          (Table 3).
+        </p>
+        <p>
+          Under distractor-object shifts, task success increases from
+          <strong>9/20</strong> to <strong>16/20</strong>; under lighting shifts,
+          it increases from <strong>10/20</strong> to <strong>15/20</strong>
+          (Table 4).
+        </p>
+      </div>
+    </div>
 
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code>@article{park2021nerfies,
-  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},
-  title     = {Nerfies: Deformable Neural Radiance Fields},
-  journal   = {ICCV},
-  year      = {2021},
+    <div class="carve-results-grid">
+      <figure class="carve-media-block">
+        <a class="carve-image-link" href="./static/Table/Table3_realworld_table_shift_result.png" target="_blank" rel="noopener noreferrer" aria-label="Open Table 3 at full resolution">
+          <img class="carve-figure" src="./static/Table/Table3_realworld_table_shift_result.png" alt="Real-world four-task table-shift and grasp success rates" loading="lazy">
+        </a>
+        <figcaption class="carve-caption"><strong>Table 3.</strong> Real-world results under table shift.</figcaption>
+      </figure>
+      <figure class="carve-media-block">
+        <a class="carve-image-link" href="./static/Table/Table4_realworld_distractor_light_result.png" target="_blank" rel="noopener noreferrer" aria-label="Open Table 4 at full resolution">
+          <img class="carve-figure" src="./static/Table/Table4_realworld_distractor_light_result.png" alt="Real-world task success under distractor and lighting shifts" loading="lazy">
+        </a>
+        <figcaption class="carve-caption"><strong>Table 4.</strong> Real-world results under distractor and lighting shifts.</figcaption>
+      </figure>
+    </div>
+
+    <h4 class="title is-5 has-text-centered carve-demo-heading">Real-World Demonstrations</h4>
+    <div class="carve-sim-carousel" aria-label="Real-world robot demonstrations">
+      <div class="carve-sim-row" id="real-top">
+        <button class="carve-sim-arrow carve-sim-prev" type="button" aria-label="Previous table-shift comparison">&#10094;</button>
+        <div class="carve-sim-viewport"><div class="carve-sim-track"></div></div>
+        <button class="carve-sim-arrow carve-sim-next" type="button" aria-label="Next table-shift comparison">&#10095;</button>
+        <div class="carve-sim-dots"></div>
+      </div>
+      <div class="carve-sim-row" id="real-bottom">
+        <button class="carve-sim-arrow carve-sim-prev" type="button" aria-label="Previous distractor or lighting comparison">&#10094;</button>
+        <div class="carve-sim-viewport"><div class="carve-sim-track"></div></div>
+        <button class="carve-sim-arrow carve-sim-next" type="button" aria-label="Next distractor or lighting comparison">&#10095;</button>
+        <div class="carve-sim-dots"></div>
+      </div>
+    </div>
+
+    <!-- Unpublished project page: do not invent conference or journal metadata. -->
+    <div class="carve-bibtex" id="BibTeX">
+      <h3 class="title is-4 has-text-centered">BibTeX</h3>
+      <div class="carve-bibtex-actions">
+        <button type="button" class="button is-small is-rounded" id="copy-carve-bibtex">Copy BibTeX</button>
+      </div>
+      <pre><code id="carve-bibtex-entry">@misc{kim2026carve,
+  title={CARVE: Context-Preserving Attention Reweighting of Visual Evidence for Robust Vision-Language-Action Models},
+  author={Kim, Seo-Hyun and Park, Kwang-Hyun},
+  year={2026},
+  howpublished={Project page},
+  url={https://carve-vla.github.io/}
 }</code></pre>
+    </div>
   </div>
 </section>
+<!--/ Experiments -->
 
 
 <footer class="footer">
-  <div class="container">
+  <div class="container is-max-desktop">
     <div class="content has-text-centered">
-      <a class="icon-link"
-         href="./static/videos/nerfies_paper.pdf">
-        <i class="fas fa-file-pdf"></i>
-      </a>
-      <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
-        <i class="fab fa-github"></i>
-      </a>
-    </div>
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-          <p>
-            This website is licensed under a <a rel="license"
-                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-          <p>
-            This means you are free to borrow the <a
-              href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website,
-            we just ask that you link back to this page in the footer.
-            Please remember to remove the analytics code included in the header of the website which
-            you do not want on your website.
-          </p>
-        </div>
-      </div>
+      <p>
+        Website template adapted from
+        <a href="https://github.com/nerfies/nerfies.github.io" target="_blank" rel="noopener noreferrer">NeRFies</a>.
+      </p>
     </div>
   </div>
 </footer>
 
 
-
-<!-- CARVE Simulation Carousel Script -->
+<!-- CARVE Simulation + Real-World Carousels -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+  const simulationRoot = "./static/video/slmulation/";
+  const realRoot = "./static/video/";
 
-  const videoRoot = "./static/video/slmulation/";
-
-  // Top row: Carrot on Plate and Fractal Background Shift
-  const topClips = [
-
-    {
-      condition: "Background Shift",
-      task: "Carrot on Plate",
-      baseline: "bridge/background3/background3_base.mp4",
-      ours: "bridge/background3/background3_ours.mp4"
-    },
-
-    {
-      condition: "Background Shift",
-      task: "Carrot on Plate",
-      baseline: "bridge/background4/background4_baseline.mp4",
-      ours: "bridge/background4/background4_ours.mp4"
-    },
-
-    {
-      condition: "Table Shift",
-      task: "Carrot on Plate",
-      baseline: "bridge/table3/table3_baseline.mp4",
-      ours: "bridge/table3/table3_ours.mp4"
-    },
-
-    {
-      condition: "Table Shift",
-      task: "Carrot on Plate",
-      baseline: "bridge/table4/table4_baseline.mp4",
-      ours: "bridge/table4/table4_ours.mp4"
-    },
-
-    {
-      condition: "Background Shift",
-      task: "Fractal (Coke Can)",
-      baseline: "fractal/background/background_shift_baseline.mp4",
-      ours: "fractal/background/background_shift_ours.mp4"
-    }
-
+  // Each item is one inseparable Baseline / +Ours comparison.
+  const simulationUpper = [
+    { condition: "Background Shift", task: "Carrot on Plate", baseline: "bridge/background3/background3_base.mp4", ours: "bridge/background3/background3_ours.mp4" },
+    { condition: "Background Shift", task: "Spoon on Towel", baseline: "bridge/background4/background4_baseline.mp4", ours: "bridge/background4/background4_ours.mp4" },
+    { condition: "Table Shift", task: "Green Cube on Yellow Cube", baseline: "bridge/table3/table3_baseline.mp4", ours: "bridge/table3/table3_ours.mp4" },
+    { condition: "Table Shift", task: "Green Cube on Yellow Cube", baseline: "bridge/table4/table4_baseline.mp4", ours: "bridge/table4/table4_ours.mp4" },
+    { condition: "Background Shift", task: "Pick Coke Can", baseline: "fractal/background/background_shift_baseline.mp4", ours: "fractal/background/background_shift_ours.mp4" }
+  ];
+  const simulationLower = [
+    { condition: "Background Shift", task: "Eggplant in Basket", baseline: "bridge_eggplant/eggplant_background3/Eggplant_background3_baseline.mp4", ours: "bridge_eggplant/eggplant_background3/Eggplant_background3_ours.mp4" },
+    { condition: "Background Shift", task: "Eggplant in Basket", baseline: "bridge_eggplant/eggplant_background4/Eggplant_background4_baseline.mp4", ours: "bridge_eggplant/eggplant_background4/Eggplant_background4_ours.mp4" },
+    { condition: "Table Shift", task: "Eggplant in Basket", baseline: "bridge_eggplant/eggplant_table3/Eggplant_table3_baseline.mp4", ours: "bridge_eggplant/eggplant_table3/Eggplant_table3_ours.mp4" },
+    { condition: "Table Shift", task: "Eggplant in Basket", baseline: "bridge_eggplant/eggplant_table4/Eggplant_table4_baseline.mp4", ours: "bridge_eggplant/eggplant_table4/Eggplant_table4_ours.mp4" },
+    { condition: "Table Shift", task: "Pick Coke Can", baseline: "fractal/Table/Table_shift_baseline.mp4", ours: "fractal/Table/Table_shift_ours.mp4" }
+  ];
+  const realUpper = [
+    { condition: "Table Shift", task: "Mandarin on Plate", baseline: "table_shift/mandarin_plate/mandarin_plate_base.mp4", ours: "table_shift/mandarin_plate/mandarin_plate_ours.mp4" },
+    { condition: "Table Shift", task: "Mandarin in Box", baseline: "table_shift/mandarin_box/mandarin_box_base.mp4", ours: "table_shift/mandarin_box/mandarin_box_ours.mp4" },
+    { condition: "Table Shift", task: "Tomato on Plate", baseline: "table_shift/tomato_plate/tomato_plate_base.mp4", ours: "table_shift/tomato_plate/tomato_plate_ours.mp4" },
+    { condition: "Table Shift", task: "Tomato in Box", baseline: "table_shift/tomato_box/tomato_box_base.mp4", ours: "table_shift/tomato_box/tomato_box_ours.mp4" }
+  ];
+  const realLower = [
+    { condition: "Distractor", task: "Real-World Manipulation", baseline: "distractor/distractor_base.mp4", ours: "distractor/distractor_ours.mp4" },
+    { condition: "Lighting Shift", task: "Real-World Manipulation", baseline: "dark/DARK_base.mp4", ours: "dark/DARK_ours.mp4" }
   ];
 
-  // Bottom row: Eggplant and Fractal Table Shift
-  const bottomClips = [
-
-    {
-      condition: "Background Shift",
-      task: "Eggplant in Basket",
-      baseline: "bridge_eggplant/eggplant_background3/Eggplant_background3_baseline.mp4",
-      ours: "bridge_eggplant/eggplant_background3/Eggplant_background3_ours.mp4"
-    },
-
-    {
-      condition: "Background Shift",
-      task: "Eggplant in Basket",
-      baseline: "bridge_eggplant/eggplant_background4/Eggplant_background4_baseline.mp4",
-      ours: "bridge_eggplant/eggplant_background4/Eggplant_background4_ours.mp4"
-    },
-
-    {
-      condition: "Table Shift",
-      task: "Eggplant in Basket",
-      baseline: "bridge_eggplant/eggplant_table3/Eggplant_table3_baseline.mp4",
-      ours: "bridge_eggplant/eggplant_table3/Eggplant_table3_ours.mp4"
-    },
-
-    {
-      condition: "Table Shift",
-      task: "Eggplant in Basket",
-      baseline: "bridge_eggplant/eggplant_table4/Eggplant_table4_baseline.mp4",
-      ours: "bridge_eggplant/eggplant_table4/Eggplant_table4_ours.mp4"
-    },
-
-    {
-      condition: "Table Shift",
-      task: "Fractal (Coke Can)",
-      baseline: "fractal/Table/Table_shift_baseline.mp4",
-      ours: "fractal/Table/Table_shift_ours.mp4"
-    }
-
-  ];
-
-
-  // Create an independent carousel for one row.
-  function createCarousel(rowId, clips) {
-
+  function createCarousel(rowId, clips, root) {
     const row = document.getElementById(rowId);
-
-    if (!row) return;
-
-    const viewport = row.querySelector(".carve-sim-viewport");
+    if (!row || !clips.length) return;
     const track = row.querySelector(".carve-sim-track");
-
     const prev = row.querySelector(".carve-sim-prev");
     const next = row.querySelector(".carve-sim-next");
-
     const dots = row.querySelector(".carve-sim-dots");
+    const total = clips.length;
+    // Two clones per side ensure the carousel wraps even with two visible pairs.
+    const leading = [clips[(total - 2 + total) % total], clips[total - 1]];
+    const trailing = [clips[0], clips[1 % total]];
+    const items = leading.concat(clips, trailing);
+    const cards = [];
+    let physicalIndex = 2;
+    let moving = false;
+    let rowInView = false;
 
-    if (!viewport || !track || !prev || !next || !dots) {
-      return;
-    }
-
-    // Create one Baseline / +Ours pair per experiment.
-    function createPair(clip) {
-
+    items.forEach(function (clip, itemIndex) {
       const pair = document.createElement("div");
       pair.className = "carve-sim-pair";
-
-      // Condition title
       const condition = document.createElement("div");
       condition.className = "carve-sim-condition";
       condition.textContent = clip.condition;
-
       pair.appendChild(condition);
-
-      // Two videos side by side
       const videoPair = document.createElement("div");
       videoPair.className = "carve-sim-video-pair";
-
       [
         { label: "Baseline", file: clip.baseline },
         { label: "+Ours", file: clip.ours }
       ].forEach(function (version) {
-
         const item = document.createElement("div");
         item.className = "carve-sim-video-item";
-
         const label = document.createElement("div");
         label.className = "carve-sim-label";
         label.textContent = version.label;
-
         const video = document.createElement("video");
-
         video.className = "carve-sim-video";
-        video.src = videoRoot + version.file;
-
+        video.src = root + version.file;
         video.muted = true;
         video.loop = true;
         video.playsInline = true;
         video.controls = true;
         video.preload = "none";
-
+        video.setAttribute("aria-label", clip.condition + ": " + clip.task + ", " + version.label);
         item.appendChild(label);
         item.appendChild(video);
-
         videoPair.appendChild(item);
-
       });
-
       pair.appendChild(videoPair);
-
-      // Task name below the videos
       const task = document.createElement("div");
       task.className = "carve-sim-task";
       task.textContent = clip.task;
-
       pair.appendChild(task);
-
-      return pair;
-
-    }
-
-
-    const total = clips.length;
-
-    if (total < 3) return;
-
-    /*
-     * Create an infinite carousel.
-     *
-     * Two cloned pairs are placed at each end.
-     *
-     * [3 clone] [4 clone]
-     * [0] [1] [2] [3] [4]
-     * [0 clone] [1 clone]
-     *
-     * Initial physical index: 2
-     */
-
-    // Clones before the original videos
-    track.appendChild(createPair(clips[total - 2]));
-    track.appendChild(createPair(clips[total - 1]));
-
-    // Original videos
-    clips.forEach(function (clip) {
-      track.appendChild(createPair(clip));
+      track.appendChild(pair);
+      cards.push(pair);
     });
 
-    // Clones after the original videos
-    track.appendChild(createPair(clips[0]));
-    track.appendChild(createPair(clips[1]));
-
-
-    const cards = Array.from(
-      track.querySelectorAll(".carve-sim-pair")
-    );
-
-    // The first original video pair begins at index 2.
-    let physicalIndex = 2;
-
-    let isMoving = false;
-
-
-    // Number of visible pairs
-    function getVisibleCount() {
-      return window.matchMedia("(max-width: 650px)").matches
-        ? 1
-        : 2;
+    function visibleCount() {
+      return window.matchMedia("(max-width: 650px)").matches ? 1 : 2;
     }
-
-
-    // Convert physical index to original clip index
-    function getLogicalIndex() {
-
-      return (
-        (physicalIndex - 2 + total) % total + total
-      ) % total;
-
+    function logicalIndex() {
+      return ((physicalIndex - 2) % total + total) % total;
     }
-
-
-    // Move the track to a physical pair index
-    function moveTrack(index, animate) {
-
-      const firstCard = cards[0];
-      const targetCard = cards[index];
-
-      if (!firstCard || !targetCard) return;
-
-      const offset =
-        targetCard.offsetLeft - firstCard.offsetLeft;
-
-      track.style.transition = animate
-        ? "transform 0.42s ease"
-        : "none";
-
-      track.style.transform =
-        "translate3d(-" + offset + "px, 0, 0)";
-
+    function position(index, animate) {
+      const offset = cards[index].offsetLeft - cards[0].offsetLeft;
+      track.style.transition = animate ? "transform 0.42s ease" : "none";
+      track.style.transform = "translate3d(-" + offset + "px, 0, 0)";
     }
-
-
-    // Restore transition after an invisible position reset
-    function jumpTo(index) {
-
-      physicalIndex = index;
-
-      moveTrack(physicalIndex, false);
-
-      // Force the browser to apply the reset immediately.
-      void track.offsetWidth;
-
-      track.style.transition = "";
-
-    }
-
-
-    // Play visible videos, pause hidden videos
-    function updateVideos() {
-
-      const visibleCount = getVisibleCount();
-
-      cards.forEach(function (card, cardIndex) {
-
-        const visible =
-          cardIndex >= physicalIndex &&
-          cardIndex < physicalIndex + visibleCount;
-
-        card.querySelectorAll("video").forEach(function (video) {
-
-          if (visible) {
-
-            if (video.paused) {
-
-              const promise = video.play();
-
-              if (promise !== undefined) {
-
-                promise.catch(function () {
-                  // Autoplay may be blocked by the browser.
-                });
-
-              }
-
-            }
-
-          } else {
-
-            video.pause();
-
-          }
-
-        });
-
-      });
-
-    }
-
-
-    // Update navigation dots
     function updateDots() {
-
-      const activeIndex = getLogicalIndex();
-
-      dots.querySelectorAll(".carve-sim-dot")
-        .forEach(function (dot, index) {
-
-          dot.classList.toggle(
-            "active",
-            index === activeIndex
-          );
-
-        });
-
-    }
-
-
-    // Create one dot per original experiment pair
-    function buildDots() {
-
-      dots.innerHTML = "";
-
-      clips.forEach(function (_, index) {
-
-        const dot = document.createElement("button");
-
-        dot.type = "button";
-        dot.className = "carve-sim-dot";
-
-        dot.setAttribute(
-          "aria-label",
-          "Show experiment pair " + (index + 1)
-        );
-
-        dot.addEventListener("click", function () {
-
-          if (isMoving) return;
-
-          jumpTo(index + 2);
-
-          updateDots();
-          updateVideos();
-
-        });
-
-        dots.appendChild(dot);
-
+      dots.querySelectorAll(".carve-sim-dot").forEach(function (dot, index) {
+        dot.classList.toggle("active", index === logicalIndex());
+        dot.setAttribute("aria-current", index === logicalIndex() ? "true" : "false");
       });
-
     }
-
-
-    // Move by exactly one experiment pair
-    function navigate(direction) {
-
-      if (isMoving) return;
-
-      isMoving = true;
-
+    function updateVideos() {
+      const count = visibleCount();
+      cards.forEach(function (card, index) {
+        const shown = rowInView && index >= physicalIndex && index < physicalIndex + count;
+        card.querySelectorAll("video").forEach(function (video) {
+          if (shown) {
+            if (video.paused) {
+              const promise = video.play();
+              if (promise && typeof promise.catch === "function") promise.catch(function () {});
+            }
+          } else video.pause();
+        });
+      });
+    }
+    function jump(index) {
+      physicalIndex = index;
+      position(physicalIndex, false);
+      void track.offsetWidth;
+    }
+    function move(direction) {
+      if (moving) return;
+      moving = true;
       physicalIndex += direction;
-
       updateDots();
+      position(physicalIndex, true);
       updateVideos();
-
-      moveTrack(physicalIndex, true);
-
     }
-
-
-    // Reset position after passing the cloned pairs
     track.addEventListener("transitionend", function (event) {
-
-      if (event.target !== track ||
-          event.propertyName !== "transform") {
-        return;
-      }
-
-      /*
-       * Moving right:
-       * Last original pair -> First cloned pair
-       *
-       * Moving left:
-       * First original pair -> Last cloned pair
-       */
-
-      if (physicalIndex === total + 2) {
-
-        jumpTo(2);
-
-      } else if (physicalIndex === 1) {
-
-        jumpTo(total + 1);
-
-      }
-
+      if (event.target !== track || event.propertyName !== "transform") return;
+      if (physicalIndex === total + 2) jump(2);
+      else if (physicalIndex === 1) jump(total + 1);
+      moving = false;
       updateDots();
       updateVideos();
-
-      isMoving = false;
-
     });
-
-
-    // Previous pair
-    prev.addEventListener("click", function () {
-      navigate(-1);
+    clips.forEach(function (_, i) {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "carve-sim-dot";
+      dot.setAttribute("aria-label", "Show comparison " + (i + 1));
+      dot.addEventListener("click", function () {
+        if (moving) return;
+        jump(i + 2);
+        updateDots();
+        updateVideos();
+      });
+      dots.appendChild(dot);
     });
-
-
-    // Next pair
-    next.addEventListener("click", function () {
-      navigate(1);
-    });
-
-
-    // Recalculate position when the window is resized
+    prev.addEventListener("click", function () { move(-1); });
+    next.addEventListener("click", function () { move(1); });
     window.addEventListener("resize", function () {
-
-      if (isMoving) return;
-
-      jumpTo(physicalIndex);
-
+      if (moving) return;
+      position(physicalIndex, false);
       updateVideos();
-
     });
-
-
-    // Initialize
-    buildDots();
-
-    jumpTo(physicalIndex);
-
+    // Offscreen carousels should not play all demo videos simultaneously.
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(function (entries) {
+        rowInView = entries[0].isIntersecting;
+        updateVideos();
+      }, { threshold: 0.05 });
+      observer.observe(row);
+    } else rowInView = true;
+    position(physicalIndex, false);
     updateDots();
     updateVideos();
-
   }
 
+  createCarousel("sim-top", simulationUpper, simulationRoot);
+  createCarousel("sim-bottom", simulationLower, simulationRoot);
+  createCarousel("real-top", realUpper, realRoot);
+  createCarousel("real-bottom", realLower, realRoot);
 
-  // Two independently controlled carousel rows
-  createCarousel("sim-top", topClips);
-  createCarousel("sim-bottom", bottomClips);
-
+  const copyBibtex = document.getElementById("copy-carve-bibtex");
+  const bibtexEntry = document.getElementById("carve-bibtex-entry");
+  if (copyBibtex && bibtexEntry) {
+    copyBibtex.addEventListener("click", function () {
+      const citation = bibtexEntry.textContent;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(citation).then(function () {
+          copyBibtex.textContent = "Copied";
+        }).catch(function () {
+          copyBibtex.textContent = "Select the BibTeX text to copy";
+        });
+      } else {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(bibtexEntry);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        copyBibtex.textContent = "Selected — press Ctrl+C";
+      }
+    });
+  }
 });
 </script>
 
 
 </body>
+
 </html>

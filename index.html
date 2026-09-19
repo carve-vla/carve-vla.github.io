@@ -54,57 +54,91 @@ for Robust Vision-Language-Action Models</title>
 .carve-experiments .carve-attention-intro { max-width: 900px; margin: .65rem auto .6rem; }
 .carve-experiments .carve-attention-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; margin: 0 auto 1.4rem; }
 .carve-experiments .carve-attention-grid .carve-figure { max-height: 305px; width: auto; object-fit: contain; }
-.carve-experiments .carve-real-overview::after { content: ''; display: block; clear: both; }
-.carve-experiments .carve-real-figure { float: right; width: 51%; margin: .2rem 0 .7rem 22px; }
-.carve-experiments .carve-real-figure .carve-figure { width: 100%; }
-.carve-experiments .carve-real-copy { text-align: justify; }
-.carve-experiments .carve-real-copy p { margin-bottom: .75rem; }
-.carve-experiments .carve-real-results {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+
+
+/* Real-World Experiments */
+
+.carve-experiments .carve-real-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 20px;
+  align-items: start;
   width: 100%;
-  gap: 22px;
-  margin: 20px auto 28px;
+  margin: 0 auto 1.5rem;
 }
 
-.carve-experiments .carve-real-result-item {
-  width: 100%;
+/* Left: experimental description */
+
+.carve-experiments .carve-real-description {
+  min-width: 0;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.carve-experiments .carve-real-description p {
+  margin: 0 0 0.85rem;
+}
+
+/* Right: Table 3, Table 4, Figure 7 */
+
+.carve-experiments .carve-real-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.carve-experiments .carve-real-panel-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.carve-experiments .carve-real-panel-item {
+  min-width: 0;
   margin: 0;
   text-align: center;
 }
 
-.carve-experiments .carve-real-result-item .carve-image-link {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.carve-experiments .carve-real-panel-item .carve-image-link {
+  display: block;
   width: 100%;
 }
 
-/* Table 3: tall table */
-
-.carve-experiments .carve-real-table3 {
+.carve-experiments .carve-real-panel-item img {
   display: block;
-  width: auto;
+  width: 100%;
   height: auto;
   max-width: 100%;
-  max-height: 340px;
   object-fit: contain;
+  margin: 0 auto;
 }
 
-/* Table 4: wide table */
-
-.carve-experiments .carve-real-table4 {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 210px;
-  object-fit: contain;
+.carve-experiments .carve-real-panel-item .carve-caption {
+  margin: 6px auto 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  text-align: center;
 }
-/* Captions */.carve-experiments .carve-real-result-item .carve-caption {
-  margin: 8px auto 0;
-  text-align: center;}
+
+/* Mobile */
+
+@media (max-width: 800px) {
+  .carve-experiments .carve-real-layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .carve-experiments .carve-real-panel {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+  }
+}
+
+
 .carve-experiments .carve-divider { height: 1px; background: #e7eaf0; margin: 2rem 0; }
 .carve-experiments .carve-demo-heading { margin: 1.6rem 0 .85rem; }
 .carve-experiments .carve-sim-carousel { margin-top: .75rem; }
@@ -122,11 +156,6 @@ for Robust Vision-Language-Action Models</title>
     grid-template-columns: 1fr;
   }
 
-  .carve-experiments .carve-real-figure {
-    float: none;
-    width: 100%;
-    margin: 0 auto 1rem;
-  }
 
   .carve-experiments .carve-table-first .carve-figure {
     width: 100%;
@@ -903,88 +932,134 @@ for Robust Vision-Language-Action Models</title>
 
 
 
-    <!-- REAL WORLD: float Figure 7, allowing text to flow into the space below it. -->
-    <h3 class="title is-4 has-text-centered carve-subtitle" id="real-world-results">Real-World Experiments</h3>
-    <div class="carve-real-overview carve-overview-copy">
-      <figure class="carve-media-block carve-real-figure">
-        <a class="carve-image-link" href="./static/images/Figure7.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 7 at full resolution">
-          <img class="carve-figure" src="./static/images/Figure7.jpg" alt="Real-world in-domain, table-shift, distractor, and lighting-shift scenes" loading="lazy">
-        </a>
-        <figcaption class="carve-caption"><strong>Figure 7.</strong> Real-world in-domain and OOD visual conditions.</figcaption>
-      </figure>
-      <div class="carve-real-copy">
+
+    <!-- Real-World Experiments -->
+
+    <h3 class="title is-4 has-text-centered carve-subtitle"
+        id="real-world-results">
+      Real-World Experiments
+    </h3>
+
+    <div class="carve-real-layout">
+
+      <!-- LEFT: Experimental description -->
+      <div class="carve-real-description carve-overview-copy">
+
         <p>
-          We evaluate four tabletop manipulation tasks with a <strong>6-DoF xArm</strong>
-          and an <strong>Intel RealSense D435i</strong> RGB camera: placing a tomato
-          or mandarin orange on a plate or in a white box. The SpatialVLA-based
-          policy is LoRA-fine-tuned on task demonstrations and then frozen;
+          We evaluate four tabletop manipulation tasks with a
+          <strong>6-DoF xArm</strong> and an
+          <strong>Intel RealSense D435i</strong> RGB camera:
+          placing a tomato or mandarin orange on a plate or
+          in a white box. The SpatialVLA-based policy is
+          LoRA-fine-tuned on task demonstrations and then frozen;
           CARVE is applied only at inference time.
         </p>
+
         <p>
-          Figure 7 shows the in-domain scene and the table, distractor-object,
-          and lighting shifts. Under table shift, overall task success increases
-          from <strong>31/80</strong> to <strong>57/80</strong> with CARVE, and grasp
-          success increases from <strong>44/80</strong> to <strong>64/80</strong>
+          Figure 7 shows the in-domain scene and the table,
+          distractor-object, and lighting shifts. Under table shift,
+          overall task success increases from
+          <strong>31/80</strong> to <strong>57/80</strong>
+          with CARVE, and grasp success increases from
+          <strong>44/80</strong> to <strong>64/80</strong>
           (Table 3).
         </p>
+
         <p>
-          Under distractor-object shifts, task success increases from
-          <strong>9/20</strong> to <strong>16/20</strong>; under lighting shifts,
-          it increases from <strong>10/20</strong> to <strong>15/20</strong>
+          Under distractor-object shifts, task success increases
+          from <strong>9/20</strong> to <strong>16/20</strong>;
+          under lighting shifts, it increases from
+          <strong>10/20</strong> to <strong>15/20</strong>
           (Table 4).
         </p>
-      </div>
-    </div>
 
+      </div>
+
+      <!-- RIGHT: Table 3, Table 4, Figure 7 -->
+      <div class="carve-real-panel">
+
+        <!-- Table 3 -->
+        <figure class="carve-real-panel-item carve-real-panel-table3">
+
+          <a class="carve-image-link"
+            href="./static/Table/Table3_realworld_table_shift_result.png"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open Table 3 at full resolution">
+
+            <img
+              src="./static/Table/Table3_realworld_table_shift_result.png"
+              alt="Real-world manipulation results under table shift"
+              loading="lazy">
+
+          </a>
+
+          <figcaption class="carve-caption">
+            <strong>Table 3.</strong>
+            Real-world results under table shift.
+          </figcaption>
+
+        </figure>
+
+        <!-- RIGHT COLUMN: Table 4 and Figure 7 -->
+        <div class="carve-real-panel-right">
+
+          <!-- Table 4 -->
+          <figure class="carve-real-panel-item">
+
+            <a class="carve-image-link"
+              href="./static/Table/Table4_realworld_distractor_light_result.png"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open Table 4 at full resolution">
+
+              <img
+                src="./static/Table/Table4_realworld_distractor_light_result.png"
+                alt="Real-world results under distractor and lighting shifts"
+                loading="lazy">
+
+            </a>
+
+            <figcaption class="carve-caption">
+              <strong>Table 4.</strong>
+              Distractor and lighting shift results.
+            </figcaption>
+
+          </figure>
+
+          <!-- Figure 7: New horizontal image -->
+          <figure class="carve-real-panel-item">
+
+            <a class="carve-image-link"
+              href="./static/images/Figure_realworld.png"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open Figure 7 at full resolution">
+
+              <img
+                src="./static/images/Figure_realworld.png"
+                alt="Real-world in-domain and OOD visual conditions"
+                loading="lazy">
+
+            </a>
+
+            <figcaption class="carve-caption">
+              <strong>Figure 7.</strong>
+              Real-world visual conditions.
+            </figcaption>
+
+          </figure>
+
+        </div>
+
+      </div>
+
+    </div>
 
 
 
     <!-- Real-World Quantitative Results -->
-    <div class="carve-real-results">
 
-      <!-- Table 3 -->
-      <figure class="carve-real-result-item">
-        <a class="carve-image-link"
-          href="./static/Table/Table3_realworld_table_shift_result.png"
-          target="_blank"
-          rel="noopener noreferrer">
-
-          <img
-            src="./static/Table/Table3_realworld_table_shift_result.png"
-            alt="Real-world manipulation results under table shift"
-            class="carve-real-table3"
-            loading="lazy">
-
-        </a>
-
-        <figcaption class="carve-caption">
-          <strong>Table 3.</strong>
-          Real-world manipulation results under table shift.
-        </figcaption>
-      </figure>
-
-      <!-- Table 4 -->
-      <figure class="carve-real-result-item">
-        <a class="carve-image-link"
-          href="./static/Table/Table4_realworld_distractor_light_result.png"
-          target="_blank"
-          rel="noopener noreferrer">
-
-          <img
-            src="./static/Table/Table4_realworld_distractor_light_result.png"
-            alt="Real-world results under distractor and lighting shifts"
-            class="carve-real-table4"
-            loading="lazy">
-
-        </a>
-
-        <figcaption class="carve-caption">
-          <strong>Table 4.</strong>
-          Real-world results under distractor and lighting shifts.
-        </figcaption>
-      </figure>
-
-    </div>
 <!--/ Real-World Quantitative Results -->
 
 

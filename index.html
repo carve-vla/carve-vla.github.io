@@ -59,8 +59,52 @@ for Robust Vision-Language-Action Models</title>
 .carve-experiments .carve-real-figure .carve-figure { width: 100%; }
 .carve-experiments .carve-real-copy { text-align: justify; }
 .carve-experiments .carve-real-copy p { margin-bottom: .75rem; }
-.carve-experiments .carve-results-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 20px; align-items: start; margin: .85rem 0 1.3rem; }
-.carve-experiments .carve-results-grid .carve-figure { max-height: 360px; width: auto; object-fit: contain; }
+.carve-experiments .carve-real-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 22px;
+  margin: 20px auto 28px;
+}
+
+.carve-experiments .carve-real-result-item {
+  width: 100%;
+  margin: 0;
+  text-align: center;
+}
+
+.carve-experiments .carve-real-result-item .carve-image-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Table 3: tall table */
+
+.carve-experiments .carve-real-table3 {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 340px;
+  object-fit: contain;
+}
+
+/* Table 4: wide table */
+
+.carve-experiments .carve-real-table4 {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 210px;
+  object-fit: contain;
+}
+/* Captions */.carve-experiments .carve-real-result-item .carve-caption {
+  margin: 8px auto 0;
+  text-align: center;}
 .carve-experiments .carve-divider { height: 1px; background: #e7eaf0; margin: 2rem 0; }
 .carve-experiments .carve-demo-heading { margin: 1.6rem 0 .85rem; }
 .carve-experiments .carve-sim-carousel { margin-top: .75rem; }
@@ -71,17 +115,29 @@ for Robust Vision-Language-Action Models</title>
   .carve-experiments .carve-overview-grid { grid-template-columns: 1fr; gap: 14px; }
   .carve-experiments .carve-attention-grid { gap: 10px; }
   .carve-experiments .carve-attention-grid .carve-figure { max-height: 240px; }
-  .carve-experiments .carve-results-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .carve-experiments .carve-caption { font-size: .76rem; }
 }
 @media (max-width: 600px) {
-  .carve-experiments .carve-attention-grid, .carve-experiments .carve-results-grid { grid-template-columns: 1fr; }
-  .carve-experiments .carve-real-figure { float: none; width: 100%; margin: 0 auto 1rem; }
-  .carve-experiments .carve-table-first .carve-figure { width: 100%; }
+  .carve-experiments .carve-attention-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .carve-experiments .carve-real-figure {
+    float: none;
+    width: 100%;
+    margin: 0 auto 1rem;
+  }
+
+  .carve-experiments .carve-table-first .carve-figure {
+    width: 100%;
+  }
 }
 </style>
 
+
+
 <!-- CARVE Simulation Carousel Style -->
+
 
 <style>
 
@@ -845,6 +901,8 @@ for Robust Vision-Language-Action Models</title>
 
     <div class="carve-divider" role="separator"></div>
 
+
+
     <!-- REAL WORLD: float Figure 7, allowing text to flow into the space below it. -->
     <h3 class="title is-4 has-text-centered carve-subtitle" id="real-world-results">Real-World Experiments</h3>
     <div class="carve-real-overview carve-overview-copy">
@@ -878,20 +936,57 @@ for Robust Vision-Language-Action Models</title>
       </div>
     </div>
 
-    <div class="carve-results-grid">
-      <figure class="carve-media-block">
-        <a class="carve-image-link" href="./static/Table/Table3_realworld_table_shift_result.png" target="_blank" rel="noopener noreferrer" aria-label="Open Table 3 at full resolution">
-          <img class="carve-figure" src="./static/Table/Table3_realworld_table_shift_result.png" alt="Real-world four-task table-shift and grasp success rates" loading="lazy">
+
+
+
+    <!-- Real-World Quantitative Results -->
+    <div class="carve-real-results">
+
+      <!-- Table 3 -->
+      <figure class="carve-real-result-item">
+        <a class="carve-image-link"
+          href="./static/Table/Table3_realworld_table_shift_result.png"
+          target="_blank"
+          rel="noopener noreferrer">
+
+          <img
+            src="./static/Table/Table3_realworld_table_shift_result.png"
+            alt="Real-world manipulation results under table shift"
+            class="carve-real-table3"
+            loading="lazy">
+
         </a>
-        <figcaption class="carve-caption"><strong>Table 3.</strong> Real-world results under table shift.</figcaption>
+
+        <figcaption class="carve-caption">
+          <strong>Table 3.</strong>
+          Real-world manipulation results under table shift.
+        </figcaption>
       </figure>
-      <figure class="carve-media-block">
-        <a class="carve-image-link" href="./static/Table/Table4_realworld_distractor_light_result.png" target="_blank" rel="noopener noreferrer" aria-label="Open Table 4 at full resolution">
-          <img class="carve-figure" src="./static/Table/Table4_realworld_distractor_light_result.png" alt="Real-world task success under distractor and lighting shifts" loading="lazy">
+
+      <!-- Table 4 -->
+      <figure class="carve-real-result-item">
+        <a class="carve-image-link"
+          href="./static/Table/Table4_realworld_distractor_light_result.png"
+          target="_blank"
+          rel="noopener noreferrer">
+
+          <img
+            src="./static/Table/Table4_realworld_distractor_light_result.png"
+            alt="Real-world results under distractor and lighting shifts"
+            class="carve-real-table4"
+            loading="lazy">
+
         </a>
-        <figcaption class="carve-caption"><strong>Table 4.</strong> Real-world results under distractor and lighting shifts.</figcaption>
+
+        <figcaption class="carve-caption">
+          <strong>Table 4.</strong>
+          Real-world results under distractor and lighting shifts.
+        </figcaption>
       </figure>
+
     </div>
+<!--/ Real-World Quantitative Results -->
+
 
     <h4 class="title is-5 has-text-centered carve-demo-heading">Real-World Demonstrations</h4>
     <div class="carve-sim-carousel" aria-label="Real-world robot demonstrations">
@@ -909,6 +1004,8 @@ for Robust Vision-Language-Action Models</title>
       </div>
     </div>
 
+
+    
     <!-- Unpublished project page: do not invent conference or journal metadata. -->
     <div class="carve-bibtex" id="BibTeX">
       <h3 class="title is-4 has-text-centered">BibTeX</h3>

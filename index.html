@@ -33,6 +33,185 @@ for Robust Vision-Language-Action Models</title>
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
+
+<!-- CARVE Simulation Carousel Style -->
+<style>
+
+.carve-sim-carousel {
+  position: relative;
+  width: 100%;
+  margin-top: 25px;
+  padding: 28px 48px 32px;
+  background: #f8faff;
+  border: 1px solid #dce4f5;
+  border-radius: 16px;
+}
+
+/* Simulation pages */
+.carve-sim-page[hidden] {
+  display: none;
+}
+
+.carve-sim-page {
+  width: 100%;
+}
+
+/* Two rows */
+.carve-sim-row {
+  margin-bottom: 28px;
+}
+
+/* Two video pairs per row */
+.carve-sim-pairs {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+
+/* One Baseline / +Ours pair */
+.carve-sim-pair {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Center a single pair on the Fractal page */
+.carve-sim-pairs.single-pair .carve-sim-pair {
+  flex: 0 1 calc((100% - 18px) / 2);
+}
+
+/* Background Shift / Table Shift */
+.carve-sim-condition {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #364152;
+  margin-bottom: 10px;
+}
+
+/* Baseline and +Ours side by side */
+.carve-sim-video-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.carve-sim-video-item {
+  min-width: 0;
+  text-align: center;
+}
+
+/* Baseline / +Ours labels */
+.carve-sim-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #364152;
+  margin-bottom: 8px;
+}
+
+/* Video */
+.carve-sim-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #111;
+  border-radius: 10px;
+}
+
+/* Task name below each video pair */
+.carve-sim-task {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #364152;
+  margin-top: 10px;
+}
+
+/* Navigation arrows */
+.carve-sim-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #3273dc;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 2;
+  padding: 6px;
+}
+
+.carve-sim-prev {
+  left: 7px;
+}
+
+.carve-sim-next {
+  right: 7px;
+}
+
+.carve-sim-arrow:hover {
+  color: #174ea6;
+}
+
+/* Navigation dots */
+.carve-sim-dots {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 22px;
+}
+
+.carve-sim-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #c2cad8;
+  cursor: pointer;
+}
+
+.carve-sim-dot.active {
+  background: #3273dc;
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+
+  .carve-sim-carousel {
+    padding: 20px 30px 25px;
+  }
+
+  .carve-sim-pairs {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .carve-sim-pairs.single-pair .carve-sim-pair {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .carve-sim-video-pair {
+    gap: 8px;
+  }
+
+  .carve-sim-condition,
+  .carve-sim-label,
+  .carve-sim-task {
+    font-size: 0.8rem;
+  }
+
+  .carve-sim-arrow {
+    font-size: 22px;
+    padding: 3px;
+  }
+
+}
+
+</style>
+
+
   <link rel="icon" href="./static/images/favicon.svg">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -261,17 +440,51 @@ for Robust Vision-Language-Action Models</title>
 
 
 
-    <!-- Paper video. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Video</h2>
-        <div class="publication-video">
-          <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0"
-                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    
+    <!-- Simulation Demonstrations. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+
+        <h2 class="title is-3 has-text-centered">
+          Simulation Demonstrations
+        </h2>
+
+        <h3 class="title is-4 has-text-centered">
+          SimplerEnv
+        </h3>
+
+        <div class="carve-sim-carousel">
+
+          <!-- Previous -->
+          <button
+            class="carve-sim-arrow carve-sim-prev"
+            id="sim-prev"
+            type="button"
+            aria-label="Previous demonstrations">
+            &#10094;
+          </button>
+
+          <!-- Simulation pages -->
+          <div id="sim-slides"></div>
+
+          <!-- Next -->
+          <button
+            class="carve-sim-arrow carve-sim-next"
+            id="sim-next"
+            type="button"
+            aria-label="Next demonstrations">
+            &#10095;
+          </button>
+
+          <!-- Navigation dots -->
+          <div class="carve-sim-dots" id="sim-dots"></div>
+
         </div>
+
       </div>
     </div>
-    <!--/ Paper video. -->
+    <!--/ Simulation Demonstrations. -->
+
   </div>
 </section>
 
@@ -457,6 +670,333 @@ for Robust Vision-Language-Action Models</title>
     </div>
   </div>
 </footer>
+
+
+<!-- CARVE Simulation Carousel Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  // Match the actual folder name in your repository.
+  const videoRoot = "./video/slmuation/";
+
+  const simulationPages = [
+
+    // PAGE 1: BACKGROUND SHIFT
+    {
+      rows: [
+
+        // Carrot on Plate
+        {
+          clips: [
+            {
+              condition: "Background Shift",
+              task: "Carrot on Plate",
+              baseline: "bridge/background3/background3_base.mp4",
+              ours: "bridge/background3/background3_ours.mp4"
+            },
+            {
+              condition: "Background Shift",
+              task: "Carrot on Plate",
+              baseline: "bridge/background4/background4_baseline.mp4",
+              ours: "bridge/background4/background4_ours.mp4"
+            }
+          ]
+        },
+
+        // Eggplant
+        {
+          clips: [
+            {
+              condition: "Background Shift",
+              task: "Eggplant in Basket",
+              baseline: "bridge_eggplant/eggplant_background3/Eggplant_background3_baseline.mp4",
+              ours: "bridge_eggplant/eggplant_background3/Eggplant_background3_ours.mp4"
+            },
+            {
+              condition: "Background Shift",
+              task: "Eggplant in Basket",
+              baseline: "bridge_eggplant/eggplant_background4/Eggplant_background4_baseline.mp4",
+              ours: "bridge_eggplant/eggplant_background4/Eggplant_background4_ours.mp4"
+            }
+          ]
+        }
+
+      ]
+    },
+
+    // PAGE 2: TABLE SHIFT
+    {
+      rows: [
+
+        // Carrot on Plate
+        {
+          clips: [
+            {
+              condition: "Table Shift",
+              task: "Carrot on Plate",
+              baseline: "bridge/table3/table3_baseline.mp4",
+              ours: "bridge/table3/table3_ours.mp4"
+            },
+            {
+              condition: "Table Shift",
+              task: "Carrot on Plate",
+              baseline: "bridge/table4/table4_baseline.mp4",
+              ours: "bridge/table4/table4_ours.mp4"
+            }
+          ]
+        },
+
+        // Eggplant
+        {
+          clips: [
+            {
+              condition: "Table Shift",
+              task: "Eggplant in Basket",
+              baseline: "bridge_eggplant/eggplant_table3/Eggplant_table3_baseline.mp4",
+              ours: "bridge_eggplant/eggplant_table3/Eggplant_table3_ours.mp4"
+            },
+            {
+              condition: "Table Shift",
+              task: "Eggplant in Basket",
+              baseline: "bridge_eggplant/eggplant_table4/Eggplant_table4_baseline.mp4",
+              ours: "bridge_eggplant/eggplant_table4/Eggplant_table4_ours.mp4"
+            }
+          ]
+        }
+
+      ]
+    },
+
+    // PAGE 3: FRACTAL
+    {
+      rows: [
+
+        // Fractal Background Shift
+        {
+          clips: [
+            {
+              condition: "Background Shift",
+              task: "Fractal (Coke Can)",
+              baseline: "fractal/background/background_shift_baseline.mp4",
+              ours: "fractal/background/background_shift_ours.mp4"
+            }
+          ]
+        },
+
+        // Fractal Table Shift
+        {
+          clips: [
+            {
+              condition: "Table Shift",
+              task: "Fractal (Coke Can)",
+              baseline: "fractal/Table/Table_shift_baseline.mp4",
+              ours: "fractal/Table/Table_shift_ours.mp4"
+            }
+          ]
+        }
+
+      ]
+    }
+
+  ];
+
+  const slidesContainer = document.getElementById("sim-slides");
+  const dotsContainer = document.getElementById("sim-dots");
+  const prevButton = document.getElementById("sim-prev");
+  const nextButton = document.getElementById("sim-next");
+
+  if (!slidesContainer || !dotsContainer ||
+      !prevButton || !nextButton) {
+    return;
+  }
+
+  let currentPage = 0;
+
+  // Create simulation pages.
+  simulationPages.forEach(function (page, pageIndex) {
+
+    const pageElement = document.createElement("div");
+
+    pageElement.className = "carve-sim-page";
+    pageElement.hidden = pageIndex !== 0;
+
+    // Create two rows.
+    page.rows.forEach(function (rowData) {
+
+      const row = document.createElement("div");
+      row.className = "carve-sim-row";
+
+      const pairs = document.createElement("div");
+      pairs.className = "carve-sim-pairs";
+
+      if (rowData.clips.length === 1) {
+        pairs.classList.add("single-pair");
+      }
+
+      // Create Baseline / +Ours pairs.
+      rowData.clips.forEach(function (clip) {
+
+        const pair = document.createElement("div");
+        pair.className = "carve-sim-pair";
+
+        // Condition above the video pair.
+        const condition = document.createElement("div");
+
+        condition.className = "carve-sim-condition";
+        condition.textContent = clip.condition;
+
+        pair.appendChild(condition);
+
+        // Two videos side by side.
+        const videoPair = document.createElement("div");
+
+        videoPair.className = "carve-sim-video-pair";
+
+        [
+          {
+            label: "Baseline",
+            file: clip.baseline
+          },
+          {
+            label: "+Ours",
+            file: clip.ours
+          }
+        ].forEach(function (version) {
+
+          const item = document.createElement("div");
+          item.className = "carve-sim-video-item";
+
+          const label = document.createElement("div");
+
+          label.className = "carve-sim-label";
+          label.textContent = version.label;
+
+          const video = document.createElement("video");
+
+          video.className = "carve-sim-video";
+          video.src = videoRoot + version.file;
+
+          video.muted = true;
+          video.loop = true;
+          video.playsInline = true;
+          video.controls = true;
+          video.preload = "none";
+
+          item.appendChild(label);
+          item.appendChild(video);
+
+          videoPair.appendChild(item);
+
+        });
+
+        pair.appendChild(videoPair);
+
+        // Task name below the video pair.
+        const task = document.createElement("div");
+
+        task.className = "carve-sim-task";
+        task.textContent = clip.task;
+
+        pair.appendChild(task);
+
+        pairs.appendChild(pair);
+
+      });
+
+      row.appendChild(pairs);
+      pageElement.appendChild(row);
+
+    });
+
+    slidesContainer.appendChild(pageElement);
+
+    // Navigation dot.
+    const dot = document.createElement("button");
+
+    dot.className = "carve-sim-dot";
+    dot.type = "button";
+
+    dot.setAttribute(
+      "aria-label",
+      "Go to simulation page " + (pageIndex + 1)
+    );
+
+    dot.addEventListener("click", function () {
+      showPage(pageIndex);
+    });
+
+    dotsContainer.appendChild(dot);
+
+  });
+
+  const pages = slidesContainer.querySelectorAll(
+    ".carve-sim-page"
+  );
+
+  const dots = dotsContainer.querySelectorAll(
+    ".carve-sim-dot"
+  );
+
+  // Display the selected page.
+  function showPage(index) {
+
+    currentPage = (index + pages.length) % pages.length;
+
+    pages.forEach(function (page, pageIndex) {
+
+      const isActive = pageIndex === currentPage;
+
+      page.hidden = !isActive;
+
+      page.querySelectorAll("video").forEach(function (video) {
+
+        if (isActive) {
+
+          const playPromise = video.play();
+
+          if (playPromise !== undefined) {
+            playPromise.catch(function () {
+              // Browser may block autoplay.
+            });
+          }
+
+        } else {
+
+          video.pause();
+
+        }
+
+      });
+
+    });
+
+    dots.forEach(function (dot, dotIndex) {
+
+      dot.classList.toggle(
+        "active",
+        dotIndex === currentPage
+      );
+
+    });
+
+  }
+
+  // Previous page.
+  prevButton.addEventListener("click", function () {
+    showPage(currentPage - 1);
+  });
+
+  // Next page.
+  nextButton.addEventListener("click", function () {
+    showPage(currentPage + 1);
+  });
+
+  // Initialize.
+  showPage(0);
+
+});
+</script>
+
 
 </body>
 </html>
